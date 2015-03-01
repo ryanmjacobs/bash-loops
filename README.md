@@ -21,15 +21,23 @@ with the results. So, I decided to test it for myself.
 * `benchmark-ips 2.1.1`
 
 ### Results
+i/ps is calculated over a 5-second sample.
 ```
-# i/ps is calculated over a 5-second sample.
-
+# n = 1000
       for seq 0 1000:      204.5 (±24.9%) i/s
        for {0..1000}:       82.9 (±10.9%) i/s - 2.47x slower
        for (( ... )):       66.9 (±10.5%) i/s - 3.06x slower
      while [[ ... ]]:       53.2 (±17.2%) i/s - 3.84x slower
      while read line:       53.0 (±22.6%) i/s - 3.86x slower
        while [ ... ]:       46.4 (±15.0%) i/s - 4.41x slower
+
+# n = 100000
+      for seq 0 100000:    231.3 (±33.3%) i/s
+       for {0..100000}:      1.3 (± 0.0%) i/s - 172.68x slower
+         for (( ... )):      0.9 (± 0.0%) i/s - 247.69x slower
+       while read line:      0.9 (± 0.0%) i/s - 253.03x slower
+       while [[ ... ]]:      0.7 (± 0.0%) i/s - 309.71x slower
+         while [ ... ]:      0.6 (± 0.0%) i/s - 364.90x slower
 ```
 
 ### Breakdown
