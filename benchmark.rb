@@ -4,7 +4,7 @@ require "benchmark"
 require "benchmark/ips"
 
 Benchmark.ips do |x|
-    x.time = 10
+    x.time = 90
 
     x.report("for (( ... ))")           {`bash ./loops/for.sh`}
     x.report("for seq 0 1000")          {`bash ./loops/seq.sh`}
