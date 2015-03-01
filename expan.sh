@@ -1,5 +1,3 @@
-#!/bin/bash
-
-for i in {0..100000}; do
+for i in {0..1000}; do
     echo "hello"
 done
