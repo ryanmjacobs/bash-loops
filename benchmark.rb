@@ -14,6 +14,8 @@ def trials(x, n)
     x.report("while [ .. ]")     {`bash ./loops/while-sb.sh`}
     x.report("while [[ .. ]]")   {`bash ./loops/while-db.sh`}
     x.compare!
+
+    x.json! "#{n}.json"
 end
 
 Benchmark.ips do |x|

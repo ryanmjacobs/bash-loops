@@ -1,2 +1,3 @@
+*.json
 .*.sw[op]
 Gemfile.lock
