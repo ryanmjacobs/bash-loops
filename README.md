@@ -11,8 +11,6 @@ on stackoverflow.com. Then, I wondered: what's the fastest way I can run a
 command *n* times in BASH? After some quick googling, I was not satisfied
 with the results. So, I decided to test it for myself.
 
-[Jump to the results here.](http://github.com/ryanmjacobs/bash-loops/#results)
-
 ### My System
 * `Linux 3.18.6-1-ARCH x86_64 GNU/Linux`
 * `bash 4.3.33(1)-release`
