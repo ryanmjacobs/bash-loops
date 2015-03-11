@@ -1,9 +1,7 @@
 What's the fastest way to run *n* interations in BASH?
 ======================================================
 
-**tl;dr** Use `for i in seq 0 1000`; it's the fastest.
-
-(Yes, `seq` is not POSIX, but it is available on most systems.)
+**tl;dr** Use `for i in {0..1000}`; it's the fastest.
 
 ### Background
 I happened across [this post](http://stackoverflow.com/questions/3737740/is-there-a-better-way-to-run-a-command-n-times-in-bash)
@@ -22,45 +20,28 @@ with the results. So, I decided to test it for myself.
 i/ps is calculated over a 5-second sample.
 ```
 # n = 1000
-      for seq 0 1000:      204.5 (±24.9%) i/s
-       for {0..1000}:       82.9 (±10.9%) i/s - 2.47x slower
-       for (( ... )):       66.9 (±10.5%) i/s - 3.06x slower
-     while [[ ... ]]:       53.2 (±17.2%) i/s - 3.84x slower
-     while read line:       53.0 (±22.6%) i/s - 3.86x slower
-       while [ ... ]:       46.4 (±15.0%) i/s - 4.41x slower
-
-# n = 100000
-      for seq 0 100000:    231.3 (±33.3%) i/s
-       for {0..100000}:      1.3 (± 0.0%) i/s - 172.68x slower
-         for (( ... )):      0.9 (± 0.0%) i/s - 247.69x slower
-       while read line:      0.9 (± 0.0%) i/s - 253.03x slower
-       while [[ ... ]]:      0.7 (± 0.0%) i/s - 309.71x slower
-         while [ ... ]:      0.6 (± 0.0%) i/s - 364.90x slower
+       for {0..1000}:      150.5 (±25.3%) i/s
+      for seq $(0 1000):   113.8 (±23.7%) i/s - 1.32x slower
+       for (( ... )):       95.9 (±30.2%) i/s - 1.57x slower
+     while read line:       76.2 (±23.6%) i/s - 1.97x slower
+     while [[ ... ]]:       70.9 (±31.0%) i/s - 2.12x slower
+       while [ ... ]:       64.9 (±26.6%) i/s - 2.32x slower
 ```
 
 ### Breakdown
 First of all, these are just my interpretations. I could be completely wrong, so
 feel free to let me know in the issues.
 
-`seq` wins hands down. It more than *doubles* the runner up. I think this might be
-so because it's an external binary. It seems that a compiled C binary is a lot
-faster and its sheer speed is enough to outweigh the overhead of an external
-command call.
+`for {0..1000}` is the fastest method out of the six. It is about 1.32x times
+faster than the runner up: `for $(seq 0 1000)`
 
-I noticed that when using the `seq` command, the variability of the samples is
-much higher, 24.9% compared to the other loops which are all below 20%
-(not including `while read line` which also uses `seq`). Though, I have no idea
-why this happens.
+Second place goes to: `for $(seq 0 1000)`. With third going to: `for (( .. ))`.
+The `while` loops were always slower than the `for` loops.
 
-Second place goes to: `for {0..1000}`. With third going to: `for (( .. ))`.
-There is a large enough difference between the two (82.9 - 66.9 = 16), that
-it appears that this difference didn't occur due to chance. I don't know why
-one is faster than the other.
+The `while [[ ... ]]` loop had the greatest standard deviation at ±31.0%, with
+`for (( ... ))` following close behind at ±30.2%. The rest of them have
+standard deviations between ±21.0% and ±26.6%.
 
 It seems that BASH's internal `[[ ]]` operators are faster than `[ ]`, which
 are just an alias for `test`. Over the long run, this gives `[[ ]]` a slight
 advantage in speed.
-
----
-Note: I previously had tested the effects of `typeset -i` and `let`, but have
-since removed them. If you wish to see them, checkout 87bceda.
